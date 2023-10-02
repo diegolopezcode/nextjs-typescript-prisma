@@ -1,18 +1,21 @@
 "use client";
 import React, { createContext, useState } from "react";
+import { AddNote, Note } from "../interfaces/Note";
 
 export const NoteContext = createContext<{
-  notes: any[];
+  notes: Note[];
   loadNotes: () => Promise<void>;
-  addNote: (title: string, content: string) => Promise<void>;
+  addNote: (note: AddNote) => Promise<void>;
+  deleteNote: (id: number) => Promise<void>;
 }>({
   notes: [],
   loadNotes: async () => {},
-  addNote: async (title: string, content: string) => {},
+  addNote: async (note: AddNote) => {},
+  deleteNote: async (id: number) => {},
 });
 
 export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
-  const [notes, setNotes] = useState<any[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
 
   const loadNotes = async () => {
     const res = await fetch("/api/notes");
@@ -20,20 +23,39 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
     setNotes(data);
   };
 
-  const addNote = async (title: string, content: string) => {
+  const addNote = async (note: AddNote) => {
     const res = await fetch("/api/notes", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, content }),
+      body: JSON.stringify(note),
     });
-    const {resp} = await res.json();
+    const { resp } = await res.json();
+    setNotes([...notes, resp]);
+  };
+
+  const deleteNote = async (id: number) => {
+    const res = await fetch(`/api/notes/${id}`, {
+      method: "DELETE",
+    });
+    setNotes(notes.filter((note) => String(note.id) !== String(id)));
+  };
+
+  const updateNote = async (id: number, note: AddNote) => {
+    const res = await fetch(`/api/notes/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(note),
+    });
+    const { resp } = await res.json();
     setNotes([...notes, resp]);
   };
 
   return (
-    <NoteContext.Provider value={{ notes, loadNotes, addNote }}>
+    <NoteContext.Provider value={{ notes, loadNotes, addNote, deleteNote }}>
       {children}
     </NoteContext.Provider>
   );

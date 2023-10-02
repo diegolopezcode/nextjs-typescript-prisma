@@ -7,7 +7,8 @@ const NoteForm = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const tiltle = useRef<HTMLInputElement | null>(null);
-  const { addNote, selectedNote,setSelectedNote,updateNote } = useContext(NoteContext);
+  const { addNote, selectedNote, setSelectedNote, updateNote } =
+    useContext(NoteContext);
 
   useEffect(() => {
     if (selectedNote) {
@@ -21,12 +22,12 @@ const NoteForm = () => {
     <form
       onSubmit={async (e) => {
         e.preventDefault();
+        if (!title || !content) return;
         if (selectedNote) {
           await updateNote(Number(selectedNote.id), { title, content });
           setSelectedNote(null);
-        }else{
-
-            await addNote({ title, content });
+        } else {
+          await addNote({ title, content });
         }
         setTitle("");
         setContent("");
@@ -62,12 +63,13 @@ const NoteForm = () => {
             >
               Update
             </button>
-            <button className="px-5 py-2 text-black bg-slate-400 rounded-md hover:bg-slate-700"
-            onClick={()=>{
-                setTitle("")
-                setContent("")
-                setSelectedNote(null)
-            }}
+            <button
+              className="px-5 py-2 text-black bg-slate-400 rounded-md hover:bg-slate-700"
+              onClick={() => {
+                setTitle("");
+                setContent("");
+                setSelectedNote(null);
+              }}
             >
               Cancel
             </button>

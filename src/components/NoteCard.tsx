@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
 import { Note } from "../interfaces/Note";
 import { NoteContext } from "@/context/NoteContext";
+import { HiPencil, HiTrash } from "react-icons/hi";
 
 function NoteCard({ note }: { note: Note }) {
-  const { deleteNote,setSelectedNote } = useContext(NoteContext);
+  const { deleteNote, setSelectedNote } = useContext(NoteContext);
   return (
     <div
       key={note.id}
@@ -21,13 +22,15 @@ function NoteCard({ note }: { note: Note }) {
             deleteNote(Number(note.id));
           }}
         >
-          Delete
+          <HiTrash className="text-2xl text-red-600" />
         </button>
         <button
-        onClick={async () => {
+          onClick={async () => {
             setSelectedNote(note);
-        }}
-        >Edit</button>
+          }}
+        >
+          <HiPencil className="text-2xl text-black-600" />
+        </button>
       </div>
     </div>
   );
